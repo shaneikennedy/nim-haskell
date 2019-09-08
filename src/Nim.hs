@@ -2,9 +2,14 @@ module Nim
     ( playNim
     ) where
 
+import System.Random
+
 whosTurn :: Bool -> String
-whosTurn True = "User's turn!"
-whosTurn _ = "Computer's turn!"
+whosTurn True = "User"
+whosTurn _ = "Computer"
+
+getRandomNumber ::  Int -> IO Int
+getRandomNumber max = randomRIO (1, max :: Int)
 
 getHumanInput :: Int -> IO String
 getHumanInput count = do
@@ -17,16 +22,18 @@ reportScore num = putStrLn $ "The count is now " ++ show num
 
 playHumanTurn :: Int -> IO ()
 playHumanTurn total = do
-  putStrLn $ whosTurn True
+  putStrLn $ whosTurn True ++ " turn"
   num <- getHumanInput total
   reportScore $ total - read num
   playNim (total - read num) False
 
 playComputerTurn :: Int -> IO ()
 playComputerTurn total = do
-  putStrLn $ whosTurn False
-  reportScore (total - 1)
-  playNim (total - 1) True 
+  putStrLn $ whosTurn False ++ " turn"
+  computerChoice <- getRandomNumber (ceiling $ fromIntegral total/2)
+  putStrLn $ "Computer chose: " ++ show computerChoice
+  reportScore (total - computerChoice)
+  playNim (total - computerChoice) True 
   
 
 playNim :: Int -> Bool -> IO ()
