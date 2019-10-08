@@ -1,11 +1,17 @@
 module Nim
-  ( playNim
+  ( User(Human, Computer)
+  , playNim
   ) where
 
 import System.Random
 
-whosTurn :: Bool -> String
-whosTurn True = "User"
+data User
+  = Human
+  | Computer
+  deriving (Eq)
+
+whosTurn :: User -> String
+whosTurn Human = "User"
 whosTurn _ = "Computer"
 
 getRandomNumber :: Int -> IO Int
@@ -23,21 +29,21 @@ reportScore num = putStrLn $ "The count is now " ++ show num
 
 playHumanTurn :: Int -> IO ()
 playHumanTurn total = do
-  putStrLn $ whosTurn True ++ " turn"
+  putStrLn $ whosTurn Human ++ " turn"
   num <- getHumanInput total
   reportScore $ total - read num
-  playNim (total - read num) False
+  playNim (total - read num) Computer
 
 playComputerTurn :: Int -> IO ()
 playComputerTurn total = do
-  putStrLn $ whosTurn False ++ " turn"
+  putStrLn $ whosTurn Computer ++ " turn"
   computerChoice <- getRandomNumber (ceiling $ fromIntegral total / 2)
   putStrLn $ "Computer chose: " ++ show computerChoice
   reportScore (total - computerChoice)
-  playNim (total - computerChoice) True
+  playNim (total - computerChoice) Human
 
-playNim :: Int -> Bool -> IO ()
+playNim :: Int -> User -> IO ()
 playNim total userTurn
   | total <= 0 = putStrLn (whosTurn userTurn ++ " wins!")
-  | userTurn = playHumanTurn total
+  | userTurn == Human = playHumanTurn total
   | otherwise = playComputerTurn total
