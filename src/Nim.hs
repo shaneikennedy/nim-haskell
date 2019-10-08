@@ -3,8 +3,6 @@ module Nim
   , playNim
   ) where
 
-import System.Random
-
 data User
   = Human
   | Computer
@@ -14,14 +12,27 @@ whosTurn :: User -> String
 whosTurn Human = "User"
 whosTurn _ = "Computer"
 
-getRandomNumber :: Int -> IO Int
-getRandomNumber upperRange = randomRIO (1, upperRange :: Int)
+getSmartGuess :: Int -> Int
+getSmartGuess total = total + 1 - findPowTwoCandidate total
+
+maxGuess :: Int -> Int
+maxGuess total = ceiling (fromIntegral total / 2 :: Double)
+
+listPowTwos :: Int -> [Int]
+listPowTwos limit = [2 ^ i | i <- [0 .. limit] :: [Int]]
+
+findPowTwoCandidate :: Int -> Int
+findPowTwoCandidate total =
+  maximum $ filter (powTwoCandidateCriteria total) (listPowTwos total)
+
+powTwoCandidateCriteria :: Int -> Int -> Bool
+powTwoCandidateCriteria total val = val <= total && total - val <= maxGuess total
 
 getHumanInput :: Int -> IO String
-getHumanInput count = do
+getHumanInput total = do
   putStrLn $
     "Enter a number between 1 and " ++
-    show (ceiling (fromIntegral count / 2 :: Double) :: Int)
+    show (maxGuess total :: Int)
   getLine
 
 reportScore :: Int -> IO ()
@@ -37,7 +48,7 @@ playHumanTurn total = do
 playComputerTurn :: Int -> IO ()
 playComputerTurn total = do
   putStrLn $ whosTurn Computer ++ " turn"
-  computerChoice <- getRandomNumber (ceiling $ fromIntegral total / 2)
+  let computerChoice = getSmartGuess total
   putStrLn $ "Computer chose: " ++ show computerChoice
   reportScore (total - computerChoice)
   playNim (total - computerChoice) Human
