@@ -8,9 +8,9 @@ data User
   | Computer
   deriving (Eq)
 
-whosTurn :: User -> String
-whosTurn Human = "User"
-whosTurn _ = "Computer"
+whoseTurn :: User -> String
+whoseTurn Human = "User"
+whoseTurn _ = "Computer"
 
 getSmartGuess :: Int -> Int
 getSmartGuess total = total + 1 - findPowTwoCandidate total
@@ -40,14 +40,14 @@ reportScore num = putStrLn $ "The count is now " ++ show num
 
 playHumanTurn :: Int -> IO ()
 playHumanTurn total = do
-  putStrLn $ whosTurn Human ++ " turn"
+  putStrLn $ whoseTurn Human ++ " turn"
   num <- getHumanInput total
   reportScore $ total - read num
   playNim (total - read num) Computer
 
 playComputerTurn :: Int -> IO ()
 playComputerTurn total = do
-  putStrLn $ whosTurn Computer ++ " turn"
+  putStrLn $ whoseTurn Computer ++ " turn"
   let computerChoice = getSmartGuess total
   putStrLn $ "Computer chose: " ++ show computerChoice
   reportScore (total - computerChoice)
@@ -55,6 +55,6 @@ playComputerTurn total = do
 
 playNim :: Int -> User -> IO ()
 playNim total userTurn
-  | total <= 0 = putStrLn (whosTurn userTurn ++ " wins!")
+  | total <= 0 = putStrLn (whoseTurn userTurn ++ " wins!")
   | userTurn == Human = playHumanTurn total
   | otherwise = playComputerTurn total
