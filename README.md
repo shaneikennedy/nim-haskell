@@ -7,7 +7,7 @@ This is the classic game of nim done in haskell. The computer strategy is as des
 * GHC >= 8.6
 
 ## Install
-Clone the repo and run `make build` inside. This should add an executeable on your stack path.
+Clone the repo and run `make init` then `make build` inside. This should add an executeable on your stack path.
 
 ## Running
 `make play`

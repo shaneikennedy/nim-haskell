@@ -1,3 +1,6 @@
+init:
+	stack init
+
 build:
 	stack build
 
